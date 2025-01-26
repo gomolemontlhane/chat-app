@@ -111,6 +111,14 @@ npm start
 
 5. Open your browser and visit http://localhost:5173.
 
+## Testing
+
+This project includes comprehensive API testing using Postman. For detailed instructions on setting up and running these tests, please refer to the dedicated testing documentation:
+
+[Detailed Postman API Testing Instructions](./test/README.md)
+
+The tests cover key aspects of the application's functionality, including authentication, user management, and message handling. The test suite ensures the robustness and reliability of the backend API.
+
 # Deployment
 
 The application is designed for seamless deployment:

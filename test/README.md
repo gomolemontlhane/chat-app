@@ -8,6 +8,8 @@ To begin testing the API, you need to download and install Postman from the offi
 https://www.postman.com/downloads/
 Once installed, you can start creating collections and requests to test the API
 
+![Postman screenshot](../frontend/public/Postman%20screenshot.png)
+
 **1. Setting up Postman:**
 
 - **Create a New Collection:** In Postman, create a new collection (e.g., "Chat App API Tests").
