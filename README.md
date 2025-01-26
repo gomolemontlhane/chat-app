@@ -102,10 +102,12 @@ npm start
 
 5. Open your browser and visit http://localhost:5173.
 
-Deployment
+# Deployment
+
 The application is designed for seamless deployment:
-• Frontend: Deployable on platforms like Netlify or Vercel.
-• Backend: Deployable on platforms like Heroku or Render.
+
+- Frontend: Deployable on platforms like Netlify or Vercel.
+- Backend: Deployable on platforms like Heroku or Render.
 
 # Deployment Steps
 
