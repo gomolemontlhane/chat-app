@@ -50,8 +50,12 @@ A fully functional real-time chat application built using the MERN stack (MongoD
 
 ## Steps
 
-1. Clone the repository:git clone <repository_url>
-   cd <project_directory>
+1. Clone the repository:
+
+```bash
+git clone https://github.com/gomolemontlhane/chat-app
+cd chat-app
+```
 
 2. Install dependencies:
    Backend: cd server
