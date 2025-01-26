@@ -58,8 +58,13 @@ cd chat-app
 ```
 
 2. Install dependencies:
-   Backend: cd server
-   npm install
+
+- Backend:
+
+```bash
+cd server
+npm install
+```
 
 - Frontend:
 
