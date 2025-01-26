@@ -2,9 +2,9 @@
 
 A fully functional real-time chat application built using the MERN stack (MongoDB, Express.js, React.js, Node.js) and Socket.IO for seamless live communication. This application offers features such as user authentication, profile management, image uploads within messages, and online user tracking, with a responsive and modern design.
 
-<div style="display: flex; gap: 10px;">
-  <img src="/frontend/public/GomoChatapp screenshot.png" alt="Demo App" style="width: 45%; height: auto;" />
-  <img src="/frontend/public/chatscreen.png" alt="Demo App" style="width: 45%; height: auto;" />
+<div style="display: flex; gap: 10px; align-items: center;">
+  <img src="/frontend/public/GomoChatapp%20screenshot.png" alt="Demo App" style="height: 300px; object-fit: cover;" />
+  <img src="/frontend/public/chatscreen.png" alt="Demo App" style="height: 300px; object-fit: cover;" />
 </div>
 
 # Features
@@ -72,10 +72,16 @@ npm install
 PORT=5001
 MONGO_URI=your-mongodb-connection-string
 JWT_SECRET=your-jwt-secret
-CLOUDINARY_NAME=your-cloudinary-name
+CLOUDINARY_CLOUD_NAME=your-cloudinary-name
 CLOUDINARY_API_KEY=your-cloudinary-api-key
 CLOUDINARY_API_SECRET=your-cloudinary-api-secret
-Frontend (client/.env):REACT_APP_API_URL=http://localhost:5001
+NODE_ENV=developmnent
+```
+
+- Frontend (client/.env):
+
+```bash
+REACT_APP_API_URL=http://localhost:5001
 ```
 
 4. Start the development servers:
@@ -94,7 +100,7 @@ cd client
 npm start
 ```
 
-5. Open your browser and visit http://localhost:3000.
+5. Open your browser and visit http://localhost:5173.
 
 Deployment
 The application is designed for seamless deployment:
