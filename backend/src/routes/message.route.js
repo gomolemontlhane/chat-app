@@ -1,3 +1,5 @@
+// message.routes.js
+
 import express from "express";
 import { protectRoute } from "../middleware/auth.middleware.js";
 import { sendMessage, getMessages, getUsersForSidebar } from "../controllers/message.controller.js";
