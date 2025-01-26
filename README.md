@@ -111,6 +111,24 @@ npm start
 
 5. Open your browser and visit http://localhost:5173.
 
+## Postman API Testing
+
+This section outlines the API testing performed using Postman to verify the backend functionality of the chat application. The tests covered key endpoints, focusing on authentication, user management, and message handling.
+
+**Key Tests Performed:**
+
+- **Signup Endpoint:** Postman was used to test the `/api/auth/signup` endpoint. Tests included successful user registration, handling of missing fields, and error responses for duplicate emails or invalid data <sup className="rounded-full text-xs cursor-pointer [&>*]:!text-white h-4 w-4 px-1 bg-zinc-400 hover:bg-zinc-500 dark:bg-zinc-700 hover:dark:bg-zinc-600">[41:31](undefined)</sup> <sup className="rounded-full text-xs cursor-pointer [&>*]:!text-white h-4 w-4 px-1 bg-zinc-400 hover:bg-zinc-500 dark:bg-zinc-700 hover:dark:bg-zinc-600">[43:46](undefined)</sup> . Assertions were made on the HTTP status code (201 for success, 400 for bad requests) and the response body (presence of a JWT token upon successful registration).
+
+- **Login Endpoint:** The `/api/auth/login` endpoint was tested with Postman to verify successful login with valid credentials and the handling of incorrect credentials <sup className="rounded-full text-xs cursor-pointer [&>*]:!text-white h-4 w-4 px-1 bg-zinc-400 hover:bg-zinc-500 dark:bg-zinc-700 hover:dark:bg-zinc-600">[48:15](undefined)</sup> . Assertions verified the HTTP status code (200 for success, 401 for unauthorized) and the presence of a JWT token in the response.
+
+- **Protected Endpoints:** Tests were conducted on protected routes (e.g., routes requiring authentication) to ensure that unauthorized access returns appropriate error responses <sup className="rounded-full text-xs cursor-pointer [&>*]:!text-white h-4 w-4 px-1 bg-zinc-400 hover:bg-zinc-500 dark:bg-zinc-700 hover:dark:bg-zinc-600">[54:58](undefined)</sup> <sup className="rounded-full text-xs cursor-pointer [&>*]:!text-white h-4 w-4 px-1 bg-zinc-400 hover:bg-zinc-500 dark:bg-zinc-700 hover:dark:bg-zinc-600">[1:11:05](undefined)</sup> <sup className="rounded-full text-xs cursor-pointer [&>*]:!text-white h-4 w-4 px-1 bg-zinc-400 hover:bg-zinc-500 dark:bg-zinc-700 hover:dark:bg-zinc-600">[1:15:32](undefined)</sup> .
+
+- **Message Handling:** Postman was used to test the endpoints responsible for creating and retrieving messages, verifying successful message creation and retrieval with proper authentication <sup className="rounded-full text-xs cursor-pointer [&>*]:!text-white h-4 w-4 px-1 bg-zinc-400 hover:bg-zinc-500 dark:bg-zinc-700 hover:dark:bg-zinc-600">[1:22:37](undefined)</sup> <sup className="rounded-full text-xs cursor-pointer [&>*]:!text-white h-4 w-4 px-1 bg-zinc-400 hover:bg-zinc-500 dark:bg-zinc-700 hover:dark:bg-zinc-600">[1:24:50](undefined)</sup> .
+
+**Postman Collection:**
+
+A Postman collection containing all the API tests is available [link to Postman collection if applicable]. This collection can be imported directly into Postman for easy execution and modification.
+
 # Deployment
 
 The application is designed for seamless deployment:
