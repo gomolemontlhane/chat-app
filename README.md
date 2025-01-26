@@ -1,4 +1,4 @@
-# Real-Time Chat Application
+# GomoChat Application
 
 A fully functional real-time chat application built using the MERN stack (MongoDB, Express.js, React.js, Node.js) and Socket.IO for seamless live communication. This application offers features such as user authentication, profile management, image uploads within messages, and online user tracking, with a responsive and modern design.
 
