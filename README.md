@@ -190,6 +190,20 @@ server/
 - Introduce push notifications for new messages.
 - Enhance performance optimization for large-scale use.
 
+## Team and Roles
+
+**Gomolemo Ntlhane (Backend Developer):**
+
+- Designed and implemented the backend using the MERN stack (MongoDB, Express.js, React, Node.js).
+- Developed and tested all backend APIs.
+- Designed and managed the MongoDB database.
+
+**Ncediso Nkambule (Frontend Developer):**
+
+- Developed the user interface using React.js.
+- Designed and implemented the user experience (UX).
+- Ensured seamless integration with the backend API.
+
 # Contributing
 
 Contributions are welcome! Follow these steps to contribute:
