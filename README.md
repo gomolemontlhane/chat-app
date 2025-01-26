@@ -22,23 +22,23 @@ A fully functional real-time chat application built using the MERN stack (MongoD
 
 ## Frontend
 
-- React.js: For building the user interface.
-- Zustand: Lightweight state management for React.
-- Axios: HTTP client for API requests.
-- Tailwind CSS & Daisy UI: For responsive and beautiful styling.
+- `React.js:` For building the user interface.
+- `Zustand:` Lightweight state management for React.
+- `Axios:` HTTP client for API requests.
+- T`ailwind CSS & Daisy UI:` For responsive and beautiful styling.
 
 ## Backend
 
-- Node.js: Server-side JavaScript runtime.
-- Express.js: Web framework for the backend.
-- Mongoose: MongoDB object modeling for Node.js.
-- Socket.IO: Real-time communication between users.
-- Cloudinary: Image hosting and management.
-- JWT: Secure token-based authentication.
+- `Node.js:` Server-side JavaScript runtime.
+- `Express.js:` Web framework for the backend.
+- `Mongoose:` MongoDB object modeling for Node.js.
+- `Socket.IO:` Real-time communication between users.
+- `Cloudinary:` Image hosting and management.
+- J`WT:` Secure token-based authentication.
 
 ## Database
 
-- MongoDB: NoSQL database for storing user data, messages, and more.
+- `MongoDB:` NoSQL database for storing user data, messages, and more.
 
 # Setup and Installation
 
