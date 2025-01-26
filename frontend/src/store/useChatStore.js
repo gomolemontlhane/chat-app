@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
 import { useAuthStore } from "./useAuthStore";
 
+// Define Zustand store for chat functionality
 export const useChatStore = create((set, get) => ({
   messages: [],
   users: [],
@@ -10,6 +11,7 @@ export const useChatStore = create((set, get) => ({
   isUsersLoading: false,
   isMessagesLoading: false,
 
+  // Function to fetch users in the chat
   getUsers: async () => {
     set({ isUsersLoading: true });
     try {
@@ -22,6 +24,7 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  // Function to fetch messages for a selected user
   getMessages: async (userId) => {
     set({ isMessagesLoading: true });
     try {
@@ -34,21 +37,30 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  // Function to send a new message
   sendMessage: async (messageData) => {
     const { selectedUser, messages } = get();
+    const optimisticMessage = { ...messageData, _id: generateUniqueId() }; // Create an optimistic ID for the message
+
+    // Add the optimistic message to the messages list
+    set({ messages: [...messages, optimisticMessage] });
+
     try {
       const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
       
-      // Avoid adding duplicate messages by checking message IDs
-      const isMessageDuplicate = messages.some(msg => msg._id === res.data._id);
-      if (!isMessageDuplicate) {
-        set({ messages: [...messages, res.data] });
-      }
+      // Update the message with the actual server response
+      set({
+        messages: messages.map(msg =>
+          msg._id === optimisticMessage._id ? res.data : msg
+        ),
+      });
     } catch (error) {
+      // Handle failure and optionally rollback
       toast.error(error?.response?.data?.message || "Failed to send message");
     }
   },
 
+  // Function to subscribe to new incoming messages for the selected user
   subscribeToMessages: () => {
     const { selectedUser } = get();
     if (!selectedUser) return;
@@ -67,6 +79,7 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  // Function to unsubscribe from receiving new messages for the selected user
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
     if (socket?.connected) {
@@ -74,10 +87,18 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  // Function to set the selected user and manage subscription to messages
   setSelectedUser: (selectedUser) => {
-    // Unsubscribe from the previous user's messages and subscribe to the new user
+    // Unsubscribe from the previous user's messages
     get().unsubscribeFromMessages();
     set({ selectedUser });
+
+    // Subscribe to the new user's messages
     get().subscribeToMessages();
   },
 }));
+
+// Helper function to generate unique message IDs (optimistic UI)
+const generateUniqueId = () => {
+  return `${Date.now()}-${Math.random()}`; // Generate a simple unique ID based on timestamp and random number
+};
