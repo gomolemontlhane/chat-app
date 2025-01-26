@@ -2,9 +2,9 @@
 
 A fully functional real-time chat application built using the MERN stack (MongoDB, Express.js, React.js, Node.js) and Socket.IO for seamless live communication. This application offers features such as user authentication, profile management, image uploads within messages, and online user tracking, with a responsive and modern design.
 
-<div style="display: flex; gap: 10px; align-items: center;">
-  <img src="/frontend/public/GomoChatapp%20screenshot.png" alt="Demo App" style="height: 300px; object-fit: cover;" />
-  <img src="/frontend/public/chatscreen.png" alt="Demo App" style="height: 300px; object-fit: cover;" />
+<div style="display: flex; gap: 10px;">
+  <img src="/frontend/public/GomoChatapp screenshot.png" alt="Demo App" style="width: 45%; height: auto;" />
+  <img src="/frontend/public/chatscreen.png" alt="Demo App" style="width: 45%; height: auto;" />
 </div>
 
 # Features
