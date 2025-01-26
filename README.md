@@ -98,26 +98,44 @@ REACT_APP_API_URL=http://localhost:5001
 - Backend:
 
 ```bash
-cd server
+cd bankend
 npm start
 ```
 
 - Frontend:
 
 ```bash
-cd client
+cd frontend
 npm start
 ```
 
 5. Open your browser and visit http://localhost:5173.
 
-## Testing
+# Testing
+
+## backend testing
+
+- Run:
+
+```bash
+cd backend
+npm run dev
+```
 
 This project includes comprehensive API testing using Postman. For detailed instructions on setting up and running these tests, please refer to the dedicated testing documentation:
 
 [Detailed Postman API Testing Instructions](./test/README.md)
 
 The tests cover key aspects of the application's functionality, including authentication, user management, and message handling. The test suite ensures the robustness and reliability of the backend API.
+
+## frontend testing
+
+- Run:
+
+```bash
+cd frontend
+npm run dev
+```
 
 # Deployment
 
