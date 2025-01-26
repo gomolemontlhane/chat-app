@@ -16,7 +16,7 @@ export const useChatStore = create((set, get) => ({
       const res = await axiosInstance.get("/messages/users");
       set({ users: res.data });
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message || "Failed to fetch users");
     } finally {
       set({ isUsersLoading: false });
     }
@@ -28,18 +28,24 @@ export const useChatStore = create((set, get) => ({
       const res = await axiosInstance.get(`/messages/${userId}`);
       set({ messages: res.data });
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message || "Failed to fetch messages");
     } finally {
       set({ isMessagesLoading: false });
     }
   },
+
   sendMessage: async (messageData) => {
     const { selectedUser, messages } = get();
     try {
       const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
-      set({ messages: [...messages, res.data] });
+      
+      // Avoid adding duplicate messages by checking message IDs
+      const isMessageDuplicate = messages.some(msg => msg._id === res.data._id);
+      if (!isMessageDuplicate) {
+        set({ messages: [...messages, res.data] });
+      }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message || "Failed to send message");
     }
   },
 
@@ -48,21 +54,30 @@ export const useChatStore = create((set, get) => ({
     if (!selectedUser) return;
 
     const socket = useAuthStore.getState().socket;
-
-    socket.on("newMessage", (newMessage) => {
-      const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
-      if (!isMessageSentFromSelectedUser) return;
-
-      set({
-        messages: [...get().messages, newMessage],
+    
+    if (socket?.connected) {
+      socket.on("newMessage", (newMessage) => {
+        // Ensure the new message is from the selected user
+        if (newMessage.senderId === selectedUser._id) {
+          set({
+            messages: [...get().messages, newMessage],
+          });
+        }
       });
-    });
+    }
   },
 
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
-    socket.off("newMessage");
+    if (socket?.connected) {
+      socket.off("newMessage");
+    }
   },
 
-  setSelectedUser: (selectedUser) => set({ selectedUser }),
+  setSelectedUser: (selectedUser) => {
+    // Unsubscribe from the previous user's messages and subscribe to the new user
+    get().unsubscribeFromMessages();
+    set({ selectedUser });
+    get().subscribeToMessages();
+  },
 }));
