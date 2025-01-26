@@ -197,6 +197,7 @@ server/
 - Designed and implemented the backend using the MERN stack (MongoDB, Express.js, React, Node.js).
 - Developed and tested all backend APIs.
 - Designed and managed the MongoDB database.
+- Compiled the whole project
 
 **Ncediso Nkambule (Frontend Developer):**
 
