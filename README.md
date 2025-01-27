@@ -5,6 +5,8 @@ A fully functional real-time chat application built using the MERN stack (MongoD
 - Click button to test Demo:
   [![Test Demo App](https://img.shields.io/badge/Demo_App-Click_Here-blue)](https://chat-app-tp31.onrender.com)
 
+  [![Flat Button](https://img.shields.io/badge/Flat_Button-Click_me-brightgreen)](https://github.com)
+
 <div style="display: flex; gap: 10px;">
   <img src="/frontend/public/GomoChatapp screenshot.png" alt="Demo App" style="width: 45%; height: auto;" />
   <img src="/frontend/public/chatscreen.png" alt="Demo App" style="width: 45%; height: auto;" />
