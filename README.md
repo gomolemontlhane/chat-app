@@ -2,7 +2,7 @@
 
 A fully functional real-time chat application built using the MERN stack (MongoDB, Express.js, React.js, Node.js) and Socket.IO for seamless live communication. This application offers features such as user authentication, profile management, image uploads within messages, and online user tracking, with a responsive and modern design.
 
-- Click button to test GomoChat web app demo:
+- Click button to test demo:
 
   [![Test Demo App](https://img.shields.io/badge/Demo_App-Click_Here-brightgreen)](https://chat-app-tp31.onrender.com)
 
