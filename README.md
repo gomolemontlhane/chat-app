@@ -2,9 +2,8 @@
 
 A fully functional real-time chat application built using the MERN stack (MongoDB, Express.js, React.js, Node.js) and Socket.IO for seamless live communication. This application offers features such as user authentication, profile management, image uploads within messages, and online user tracking, with a responsive and modern design.
 
-<a href="https://chat-app-tp31.onrender.com" target="_blank">
-  <button style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;">Demo App</button>
-</a>
+- To quickly test the click here: (hosted on Render):
+  [![Test Demo App](https://img.shields.io/badge/Demo_App-Click_Here-blue)](https://chat-app-tp31.onrender.com)
 
 <div style="display: flex; gap: 10px;">
   <img src="/frontend/public/GomoChatapp screenshot.png" alt="Demo App" style="width: 45%; height: auto;" />
