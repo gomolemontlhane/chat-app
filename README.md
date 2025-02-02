@@ -2,7 +2,7 @@
 
 A fully functional real-time chat application built using the MERN stack (MongoDB, Express.js, React.js, Node.js) and Socket.IO for seamless live communication. This application offers features such as user authentication, profile management, image uploads within messages, and online user tracking, with a responsive and modern design.
 
-- Click button to test demo:
+- Click button to test demo: (Be patient for loading time)
 
   [![Test Demo App](https://img.shields.io/badge/Demo_App-Click_Here-brightgreen)](https://chat-app-tp31.onrender.com)
 
@@ -66,20 +66,20 @@ cd chat-app
 - Backend:
 
 ```bash
-cd server
+cd backend
 npm install
 ```
 
 - Frontend:
 
 ```bash
-cd client
+cd frontend
 npm install
 ```
 
 3. Configure environment variables:Create .env files in both the server and client directories with the following:
 
-- Backend `(server/.env)`:
+- Backend `(backend/.env)`:
 
 ```env
 PORT=5001
@@ -91,7 +91,7 @@ CLOUDINARY_API_SECRET=your-cloudinary-api-secret
 NODE_ENV=developmnent
 ```
 
-- Frontend (client/.env):
+- Frontend (frontend/.env):
 
 ```bash
 REACT_APP_API_URL=http://localhost:5001
@@ -154,7 +154,7 @@ The application is designed for seamless deployment:
 2. Build and deploy the frontend:
 
 ```bash
-cd client
+cd backend
 npm run build
 ```
 
