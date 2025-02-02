@@ -11,7 +11,7 @@ export const useThemeStore = create((set) => ({
    * Current theme of the application.
    * Retrieved from localStorage or defaults to "coffee" if not set.
    */
-  theme: localStorage.getItem("chat-theme") || "coffee",
+  theme: localStorage.getItem("chat-theme") || "Nord",
 
   /**
    * Updates the theme both in the Zustand store and localStorage.
