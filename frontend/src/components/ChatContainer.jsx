@@ -78,6 +78,7 @@ const ChatContainer = () => {
             <div
               key={message._id}
               className={`chat ${isOwnMessage ? "chat-end" : "chat-start"} w-full`}
+              ref={messageEndRef}
             >
               {/* User Avatar */}
               <div className="chat-image avatar">
@@ -101,7 +102,7 @@ const ChatContainer = () => {
               </div>
 
               {/* Message Bubble (Supports text + images) */}
-              <div className={`chat-bubble flex flex-col ${isOwnMessage ? 'chat-start' : 'chat-end'}`}>
+              <div className={`chat-bubble flex flex-col ${isOwnMessage ? 'chat-bubble-primary' : 'chat-bubble-secondary'}`}>
                 {message.image && (
                   <img
                     src={message.image}
@@ -114,8 +115,6 @@ const ChatContainer = () => {
             </div>
           );
         })}
-        {/* Scroll anchor - placed after all messages */}
-        <div ref={messageEndRef} />
       </div>
 
       <MessageInput />
