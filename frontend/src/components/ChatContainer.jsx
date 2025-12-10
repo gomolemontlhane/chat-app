@@ -168,7 +168,7 @@ const ChatContainer = () => {
 
             {/* Message timestamp */}
             <div className="chat-header mb-1">
-              <time className="text-lg opacity-50 bg-cyan-700 ml-1">
+              <time className="text-xs opacity-50 ml-1">
                 {formatMessageTime(message.createdAt)}
               </time>
             </div>
@@ -185,7 +185,7 @@ const ChatContainer = () => {
               )}
 
               {/* Message text (if present) */}
-              {message.text && <p>{message.text}</p>}
+              {message.text && <p>{message.text} and pussy</p>}
             </div>
           </div>
         ))}
