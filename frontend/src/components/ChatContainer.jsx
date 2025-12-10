@@ -101,7 +101,7 @@ const ChatContainer = () => {
               </div>
 
               {/* Message Bubble (Supports text + images) */}
-              <div className={`chat-bubble flex flex-col ${isOwnMessage ? 'chat-bubble-primary' : 'chat-bubble-secondary'}`}>
+              <div className={`chat-bubble flex flex-col ${isOwnMessage ? 'chat-start' : 'chat-end'}`}>
                 {message.image && (
                   <img
                     src={message.image}
