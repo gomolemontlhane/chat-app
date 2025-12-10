@@ -1,31 +1,47 @@
-import { useEffect, useRef, useCallback } from "react";
 import { useChatStore } from "../store/useChatStore";
-import { useAuthStore } from "../store/useAuthStore";
-import { formatMessageTime } from "../lib/utils";
+import { useEffect, useRef } from "react";
+
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
+import { useAuthStore } from "../store/useAuthStore";
+import { formatMessageTime } from "../lib/utils";
 
 /**
  * ChatContainer Component
  * 
- * Main chat interface component that displays:
- * - Chat header with selected user info
- * - Message history with auto-scrolling
- * - Real-time message subscription
- * - Message input for sending new messages
+ * The main chat interface component that displays:
+ * 1. Chat header with user information
+ * 2. List of messages between the current user and selected user
+ * 3. Message input area for sending new messages
  * 
  * Features:
- * - Real-time message updates via WebSocket/subscription
- * - Auto-scroll to latest message
- * - Loading states with skeletons
- * - Image attachment display
- * - Message timestamp formatting
+ * - Fetches and displays message history for the selected user
+ * - Subscribes to real-time message updates
+ * - Automatically scrolls to the latest message
+ * - Shows loading skeleton while fetching messages
+ * - Displays images and text messages with proper formatting
+ * - Differentiates between user's own messages and received messages
  * 
- * @returns {JSX.Element} The chat interface container
+ * Dependencies:
+ * - useChatStore: For message state and operations
+ * - useAuthStore: For authenticated user information
+ * - formatMessageTime: Utility for formatting timestamps
+ * 
+ * Usage:
+ * <ChatContainer />
  */
-const ChatContainer = (): JSX.Element => {
-  // Store hooks
+const ChatContainer = () => {
+  /**
+   * Chat Store
+   * Contains:
+   * - messages: Array of message objects in the current chat
+   * - getMessages: Function to fetch messages for a specific user
+   * - isMessagesLoading: Boolean indicating if messages are being loaded
+   * - selectedUser: The user currently being chatted with
+   * - subscribeToMessages: Function to set up real-time message updates
+   * - unsubscribeFromMessages: Function to clean up real-time subscriptions
+   */
   const {
     messages,
     getMessages,
@@ -34,195 +50,148 @@ const ChatContainer = (): JSX.Element => {
     subscribeToMessages,
     unsubscribeFromMessages,
   } = useChatStore();
-  
-  const { authUser } = useAuthStore();
-  
-  // Refs
-  const messageEndRef = useRef<HTMLDivElement>(null);
-  
+
   /**
-   * Scrolls to the latest message in the chat
-   * Triggered when messages array changes
+   * Auth Store
+   * Contains:
+   * - authUser: Current authenticated user's information
    */
-  const scrollToLatestMessage = useCallback((): void => {
-    if (messageEndRef.current && messages.length > 0) {
-      messageEndRef.current.scrollIntoView({ 
-        behavior: "smooth",
-        block: "end" 
-      });
-    }
-  }, [messages.length]);
-  
+  const { authUser } = useAuthStore();
+
   /**
-   * Effect: Fetch messages and subscribe to real-time updates
-   * Cleans up subscription when component unmounts or selected user changes
+   * messageEndRef: React ref attached to the last message element
+   * Used to automatically scroll to the bottom of the chat when new messages arrive
+   */
+  const messageEndRef = useRef(null);
+
+  /**
+   * Effect Hook 1: Message Subscription
+   * 
+   * Purpose: Fetch initial messages and set up real-time message subscription
+   * Trigger: When selectedUser._id changes (user selects a different chat)
+   * 
+   * Actions:
+   * 1. Fetches existing messages for the selected user
+   * 2. Subscribes to real-time message updates
+   * 3. Returns cleanup function to unsubscribe when component unmounts or user changes
+   * 
+   * Cleanup: Prevents memory leaks by unsubscribing from real-time updates
    */
   useEffect(() => {
-    if (!selectedUser?._id) return;
-    
-    // Fetch existing messages for selected user
+    // Fetch messages for the selected user
     getMessages(selectedUser._id);
-    
+
     // Subscribe to real-time message updates
     subscribeToMessages();
-    
-    // Cleanup: Unsubscribe from real-time updates
-    return () => {
-      unsubscribeFromMessages();
-    };
+
+    // Cleanup function: unsubscribe when component unmounts or user changes
+    return () => unsubscribeFromMessages();
   }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
-  
+
   /**
-   * Effect: Auto-scroll to latest message when messages update
+   * Effect Hook 2: Auto-scroll to Latest Message
+   * 
+   * Purpose: Keep the chat view scrolled to the latest message
+   * Trigger: When messages array changes (new messages arrive or initial load)
+   * 
+   * Note: Uses smooth scrolling for better user experience
    */
   useEffect(() => {
-    scrollToLatestMessage();
-  }, [messages, scrollToLatestMessage]);
-  
-  /**
-   * Determines if a message was sent by the authenticated user
-   * 
-   * @param {string} senderId - The sender's ID from the message
-   * @returns {boolean} True if message is from auth user
-   */
-  const isOwnMessage = useCallback((senderId: string): boolean => {
-    return senderId === authUser._id;
-  }, [authUser._id]);
-  
-  /**
-   * Gets the profile picture URL for a message sender
-   * 
-   * @param {string} senderId - The sender's ID from the message
-   * @returns {string} Profile picture URL
-   */
-  const getProfilePic = useCallback((senderId: string): string => {
-    if (isOwnMessage(senderId)) {
-      return authUser.profilePic || "/avatar.png";
+    // Only scroll if we have messages and the ref is available
+    if (messageEndRef.current && messages) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    return selectedUser.profilePic || "/avatar.png";
-  }, [isOwnMessage, authUser.profilePic, selectedUser.profilePic]);
-  
-  // Loading state
+  }, [messages]);
+
+  /**
+   * Loading State
+   * Displays skeleton UI while messages are being fetched
+   * Maintains the same layout structure for smooth transitions
+   */
   if (isMessagesLoading) {
     return (
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-auto">
         <ChatHeader />
         <MessageSkeleton />
         <MessageInput />
       </div>
     );
   }
-  
-  // No user selected state
-  if (!selectedUser?._id) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-base-200 p-4">
-        <div className="text-center">
-          <div className="text-5xl mb-4">👋</div>
-          <h2 className="text-2xl font-semibold mb-2">Welcome to Chat</h2>
-          <p className="text-base-content/70">
-            Select a conversation from the sidebar to start messaging
-          </p>
-        </div>
-      </div>
-    );
-  }
-  
-  // Empty chat state
-  if (messages.length === 0) {
-    return (
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <ChatHeader />
-        <div className="flex-1 flex flex-col items-center justify-center p-4">
-          <div className="text-center">
-            <div className="text-5xl mb-4">💬</div>
-            <h3 className="text-xl font-semibold mb-2">
-              Start a conversation with {selectedUser.fullName}
-            </h3>
-            <p className="text-base-content/70">
-              Send your first message to get started
-            </p>
-          </div>
-        </div>
-        <MessageInput />
-      </div>
-    );
-  }
-  
+
+  /**
+   * Main Chat UI
+   * 
+   * Structure:
+   * 1. Container with flex layout for proper message display
+   * 2. ChatHeader component at the top
+   * 3. Scrollable message list area
+   * 4. MessageInput component at the bottom
+   */
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-base-100">
-      {/* Chat Header */}
+    <div className="flex-1 flex flex-col overflow-auto">
+      {/* Chat header with user info and actions */}
       <ChatHeader />
-      
-      {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        {messages.map((message, index) => {
-          const ownMessage = isOwnMessage(message.senderId);
-          
-          return (
-            <div
-              key={message._id}
-              className={`chat ${ownMessage ? "chat-end" : "chat-start"} ${
-                index === messages.length - 1 ? "mb-2" : ""
-              }`}
-            >
-              {/* Profile Avatar */}
-              <div className="chat-image avatar">
-                <div className="size-10 rounded-full border border-base-300">
-                  <img
-                    src={getProfilePic(message.senderId)}
-                    alt={`${ownMessage ? "Your" : selectedUser.fullName + "'s"} profile`}
-                    className="object-cover"
-                    onError={(e) => {
-                      // Fallback to default avatar if image fails to load
-                      e.currentTarget.src = "/avatar.png";
-                    }}
-                  />
-                </div>
+
+      {/* Message list container */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((message) => (
+          /**
+           * Individual Message Bubble
+           * 
+           * Styling based on sender:
+           * - "chat-end": Messages sent by current user (aligned right)
+           * - "chat-start": Messages received from selected user (aligned left)
+           * 
+           * Note: Each message has:
+           * - Unique key for React optimization
+           * - Ref attached to last message for auto-scrolling
+           */
+          <div
+            key={message._id}
+            className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
+            ref={messageEndRef}
+          >
+            {/* Profile picture container */}
+            <div className=" chat-image avatar">
+              <div className="size-10 rounded-full border">
+                <img
+                  src={
+                    // Display appropriate profile picture based on sender
+                    message.senderId === authUser._id
+                      ? authUser.profilePic || "/avatar.png"  // Current user's profile
+                      : selectedUser.profilePic || "/avatar.png"  // Selected user's profile
+                  }
+                  alt="profile pic"
+                />
               </div>
-              
-              {/* Message Timestamp */}
-              <div className="chat-header mb-1">
-                <time className="text-xs opacity-50 ml-1">
-                  {formatMessageTime(message.createdAt)}
-                </time>
-              </div>
-              
-              {/* Message Content */}
-              <div className={`chat-bubble ${ownMessage ? "chat-bubble-primary" : "chat-bubble-secondary"}`}>
-                {/* Image Attachment */}
-                {message.image && (
-                  <img
-                    src={message.image}
-                    alt="Message attachment"
-                    className="sm:max-w-[200px] rounded-md mb-2 border border-base-300"
-                    loading="lazy"
-                  />
-                )}
-                
-                {/* Message Text */}
-                {message.text && (
-                  <p className="whitespace-pre-wrap break-words">{message.text}</p>
-                )}
-              </div>
-              
-              {/* Message Status Indicator (Optional - for own messages) */}
-              {ownMessage && (
-                <div className="chat-footer opacity-70 mt-1">
-                  <div className="text-xs">
-                    {message.isRead ? "Read" : "Delivered"}
-                  </div>
-                </div>
-              )}
             </div>
-          );
-        })}
-        
-        {/* Scroll anchor for auto-scrolling */}
-        <div ref={messageEndRef} aria-hidden="true" />
+
+            {/* Message timestamp */}
+            <div className="chat-header mb-1">
+              <time className="text-xs opacity-50 ml-1">
+                {formatMessageTime(message.createdAt)}
+              </time>
+            </div>
+
+            {/* Message content bubble */}
+            <div className="chat-bubble flex flex-col">
+              {/* Image attachment (if present) */}
+              {message.image && (
+                <img
+                  src={message.image}
+                  alt="Attachment"
+                  className="sm:max-w-[200px] rounded-md mb-2"
+                />
+              )}
+
+              {/* Message text (if present) */}
+              {message.text && <p>{message.text}</p>}
+            </div>
+          </div>
+        ))}
       </div>
-      
-      {/* Message Input */}
+
+      {/* Message input area for typing and sending new messages */}
       <MessageInput />
     </div>
   );
