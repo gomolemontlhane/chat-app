@@ -185,7 +185,7 @@ const ChatContainer = () => {
               )}
 
               {/* Message text (if present) */}
-              {message.text && <p>{message.text} and pussy</p>}
+              {message.text && <p>{message.text} and jesus</p>}
             </div>
           </div>
         ))}
