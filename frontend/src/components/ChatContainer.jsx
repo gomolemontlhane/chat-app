@@ -1,12 +1,27 @@
 import { useChatStore } from "../store/useChatStore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 
+/**
+ * ChatContainer Component
+ * 
+ * Handles the display of a chat interface between the authenticated user and a selected user.
+ * Features include:
+ * - Real-time message fetching/subscriptions
+ * - Auto-scroll to newest message
+ * - Message bubbles with avatars and timestamps
+ * - Image/text message support
+ * 
+ * @component
+ * @example
+ * return <ChatContainer />
+ */
 const ChatContainer = () => {
+  // Zustand Store Hooks
   const {
     messages,
     getMessages,
@@ -17,38 +32,34 @@ const ChatContainer = () => {
   } = useChatStore();
   const { authUser } = useAuthStore();
 
-  const messagesEndRef = useRef(null);
-  const messagesContainerRef = useRef(null);
-  const [isNearBottom, setIsNearBottom] = useState(true);
-
-  // Handle scroll position
-  const handleScroll = () => {
-    if (messagesContainerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
-      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-      setIsNearBottom(distanceFromBottom < 100);
-    }
-  };
+  // Refs
+  const messagesEndRef = useRef(null); // Reference for auto-scrolling to the latest message
 
   // Fetch messages and subscribe to real-time updates
   useEffect(() => {
+    // Fetch historical messages for the selected user
     getMessages(selectedUser._id);
+
+    // Subscribe to new messages
     subscribeToMessages();
+
+    // Cleanup: Unsubscribe when component unmounts or selectedUser changes
     return () => unsubscribeFromMessages();
   }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
 
-  // Auto-scroll to bottom only if user is near bottom
+  // Auto-scroll to bottom when messages update
   useEffect(() => {
-    if (messagesEndRef.current && isNearBottom) {
+    if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, isNearBottom]);
+  }, [messages]);
 
+  // Loading State: Show skeleton UI
   if (isMessagesLoading) {
     return (
       <div className="flex-1 flex flex-col overflow-auto">
         <ChatHeader />
-        <MessageSkeleton />
+        <MessageSkeleton /> {/* Animated loading state */}
         <MessageInput />
       </div>
     );
@@ -58,79 +69,59 @@ const ChatContainer = () => {
     <div className="flex-1 flex flex-col overflow-auto">
       <ChatHeader />
 
-      <div 
-        ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
-        onScroll={handleScroll}
-      >
-        {messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <div className="text-4xl mb-4">👋</div>
-              <p className="text-gray-500">Start a conversation with {selectedUser.fullName}</p>
-              <p className="text-sm text-gray-400 mt-2">Send your first message!</p>
-            </div>
-          </div>
-        ) : (
-          <>
-            {messages.map((message) => {
-              const isOwnMessage = message.senderId === authUser._id;
-              
-              return (
-                <div
-                  key={message._id}
-                  className={`chat ${isOwnMessage ? "chat-end" : "chat-start"} w-full`}
-                >
-                  <div className="chat-image avatar">
-                    <div className="size-10 rounded-full border">
-                      <img
-                        src={
-                          isOwnMessage
-                            ? authUser.profilePic || "/avatar.png"
-                            : selectedUser.profilePic || "/avatar.png"
-                        }
-                        alt="profile pic"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="chat-header mb-1">
-                    <time className="text-xs opacity-50 ml-1">
-                      {formatMessageTime(message.createdAt)}
-                    </time>
-                  </div>
-
-                  <div 
-                    className={`chat-bubble flex flex-col ${
-                      isOwnMessage 
-                        ? 'chat-bubble-primary' 
-                        : 'chat-bubble-secondary'
-                    }`}
-                  >
-                    {message.image && (
-                      <img
-                        src={message.image}
-                        alt="Attachment"
-                        className="sm:max-w-[200px] rounded-md mb-2"
-                      />
-                    )}
-                    {message.text && <p>{message.text}</p>}
-                  </div>
-                  
-                  {/* Message Status Indicator */}
-                  {isOwnMessage && (
-                    <div className="chat-footer opacity-50 mt-1">
-                      <div className="text-xs">
-                        {message.read ? "✓✓ Read" : "✓ Sent"}
-                      </div>
-                    </div>
-                  )}
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((message) => {
+          const isOwnMessage = message.senderId === authUser._id;
+          
+          return (
+            <div
+              key={message._id}
+              className={`chat ${isOwnMessage ? "chat-end" : "chat-start"} w-full`}
+            >
+              {/* User Avatar */}
+              <div className="chat-image avatar">
+                <div className="size-10 rounded-full border">
+                  <img
+                    src={
+                      isOwnMessage
+                        ? authUser.profilePic || "/avatar.png" // Fallback to default avatar
+                        : selectedUser.profilePic || "/avatar.png"
+                    }
+                    alt="profile pic"
+                  />
                 </div>
-              );
-            })}
-            <div ref={messagesEndRef} />
-          </>
-        )}
+              </div>
+
+              {/* Timestamp */}
+              <div className="chat-header mb-1">
+                <time className="text-xs opacity-50 ml-1">
+                  {formatMessageTime(message.createdAt)}
+                </time>
+              </div>
+
+              {/* Message Bubble (Supports text + images) */}
+              <div 
+                className={`chat-bubble flex flex-col ${
+                  isOwnMessage 
+                    ? 'chat-bubble-primary' 
+                    : 'chat-bubble-secondary'
+                }`}
+              >
+                {message.image && (
+                  <img
+                    src={message.image}
+                    alt="Attachment"
+                    className="sm:max-w-[200px] rounded-md mb-2"
+                  />
+                )}
+                {message.text && <p>{message.text}</p>}
+              </div>
+            </div>
+          );
+        })}
+        {/* Empty div for auto-scrolling to the latest message */}
+        <div ref={messagesEndRef} />
       </div>
 
       <MessageInput />
