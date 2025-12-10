@@ -22,9 +22,8 @@ const ChatContainer = () => {
     getMessages(selectedUser._id);
     subscribeToMessages();
     return () => unsubscribeFromMessages();
-  }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+  }, [selectedUser._id]);
 
-  // Auto-scroll to bottom when messages update
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -33,7 +32,7 @@ const ChatContainer = () => {
 
   if (isMessagesLoading) {
     return (
-      <div className="flex-1 flex flex-col overflow-auto">
+      <div className="flex flex-col h-full">
         <ChatHeader />
         <MessageSkeleton />
         <MessageInput />
@@ -42,60 +41,46 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-auto">
+    <div className="flex flex-col h-full">
       <ChatHeader />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* SIMPLIFIED: Remove all flex/overflow classes from container */}
+      <div className="flex-1 overflow-y-auto p-4">
         {messages.map((message) => {
           const isOwnMessage = message.senderId === authUser._id;
           
           return (
+            // KEY: Make sure this div has NO conflicting classes
             <div
               key={message._id}
               className={`chat ${isOwnMessage ? "chat-end" : "chat-start"}`}
-              // ✅ REMOVED ref from here
             >
+              {/* Avatar */}
               <div className="chat-image avatar">
-                <div className="size-10 rounded-full border">
+                <div className="w-10 rounded-full">
                   <img
                     src={
                       isOwnMessage
                         ? authUser.profilePic || "/avatar.png"
                         : selectedUser.profilePic || "/avatar.png"
                     }
-                    alt="profile pic"
+                    alt="avatar"
                   />
                 </div>
               </div>
               
-              <div className="chat-header mb-1">
-                <time className="text-xs opacity-50 ml-1">
-                  {formatMessageTime(message.createdAt)}
-                </time>
+              {/* Message bubble - SIMPLIFIED */}
+              <div className="chat-bubble bg-base-300">
+                {message.text}
               </div>
               
-              {/* ✅ ADDED bubble color classes */}
-              <div 
-                className={`chat-bubble flex flex-col ${
-                  isOwnMessage 
-                    ? 'chat-bubble-primary' 
-                    : 'chat-bubble-secondary'
-                }`}
-              >
-                {message.image && (
-                  <img
-                    src={message.image}
-                    alt="Attachment"
-                    className="sm:max-w-[200px] rounded-md mb-2"
-                  />
-                )}
-                {message.text && <p>{message.text}</p>}
+              {/* Timestamp */}
+              <div className="chat-footer opacity-50">
+                {formatMessageTime(message.createdAt)}
               </div>
             </div>
           );
         })}
-        
-        {/* ✅ ADDED: Empty div at the end for scrolling */}
         <div ref={messagesEndRef} />
       </div>
 
