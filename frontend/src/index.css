@@ -2,6 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom chat component styles to ensure proper side-by-side layout */
+@layer components {
+  .chat {
+    @apply flex items-start gap-2 w-full;
+  }
+  
+  .chat-start {
+    @apply justify-start;
+  }
+  
+  .chat-end {
+    @apply justify-end;
+  }
+  
+  .chat-image {
+    @apply flex-shrink-0;
+  }
+  
+  .chat-bubble {
+    @apply max-w-xs lg:max-w-md break-words;
+  }
+  
+  .chat-bubble-primary {
+    @apply bg-primary text-primary-content;
+  }
+  
+  .chat-bubble-secondary {
+    @apply bg-base-300 text-base-content;
+  }
+}
+
 /*
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
