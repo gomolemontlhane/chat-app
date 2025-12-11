@@ -9,16 +9,14 @@ import { formatMessageTime } from "../lib/utils";
 
 /**
  * ChatContainer Component
- * * The main chat interface component that displays:
- * 1. Chat header with user information
- * 2. List of messages between the current user and selected user
- * 3. Message input area for sending new messages
- * * FIX APPLIED: The messageEndRef is now only applied to the last message 
- * in the list to correctly enable auto-scrolling to the bottom.
+ * * Corrected Features:
+ * 1. Scrolling: messageEndRef is now correctly applied ONLY to the last message.
+ * 2. Styling: Sender ID comparison now includes String() conversion for type safety, 
+ * ensuring the "chat-start" (received) and "chat-end" (sent) styles are correct.
  */
 const ChatContainer = () => {
   /**
-   * Chat Store
+   * Chat Store (State and Actions)
    */
   const {
     messages,
@@ -30,19 +28,18 @@ const ChatContainer = () => {
   } = useChatStore();
 
   /**
-   * Auth Store
+   * Auth Store (Current User Info)
    */
   const { authUser } = useAuthStore();
 
   /**
-   * messageEndRef: React ref attached ONLY to the last message element
+   * messageEndRef: React ref attached to the last message element
    * Used to automatically scroll to the bottom of the chat.
    */
   const messageEndRef = useRef(null);
 
   /**
-   * Effect Hook 1: Message Subscription
-   * Fetches initial messages and sets up real-time message subscription.
+   * Effect Hook 1: Message Subscription and Initial Fetch
    */
   useEffect(() => {
     // Fetch messages for the selected user
@@ -57,7 +54,6 @@ const ChatContainer = () => {
 
   /**
    * Effect Hook 2: Auto-scroll to Latest Message
-   * Scrolls to the element pointed to by messageEndRef whenever the messages array changes.
    */
   useEffect(() => {
     // Only scroll if we have messages and the ref is available
@@ -68,7 +64,6 @@ const ChatContainer = () => {
 
   /**
    * Loading State
-   * Displays skeleton UI while messages are being fetched.
    */
   if (isMessagesLoading) {
     return (
@@ -90,31 +85,33 @@ const ChatContainer = () => {
 
       {/* Message list container */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Check if there are no messages */}
+        
+        {/* Display message if chat is empty */}
         {messages.length === 0 && (
             <div className="flex justify-center items-center h-full">
                 <p className="text-gray-500">Start a conversation!</p>
             </div>
         )}
 
-        {/* Map through messages and render chat bubbles */}
-        {messages.map((message, index) => { // <-- Use index for conditional ref
-            
-          // Check if the current message is the very last one
+        {/* Map through messages */}
+        {messages.map((message, index) => {
+          
+          // Determine if this is the last message for conditional ref application
           const isLastMessage = index === messages.length - 1;
 
+          /**
+           * FIX: Use String() conversion for robust comparison.
+           * This handles cases where IDs might be stored as different types (e.g., 
+           * MongoDB ObjectId object vs. string).
+           */
+          const isMyMessage = String(message.senderId) === String(authUser._id);
+          
           return (
-            /**
-             * Individual Message Bubble
-             * * Styling based on sender:
-             * - "chat-end": Messages sent by current user (aligned right)
-             * - "chat-start": Messages received from selected user (aligned left)
-             * * Ref is CONDITIONALLY attached to the last message only (isLastMessage ? messageEndRef : null)
-             */
             <div
               key={message._id}
-              className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
-              // **FIX HERE:** Only apply the ref to the last message for scrolling
+              // Styling based on the fixed comparison
+              className={`chat ${isMyMessage ? "chat-end" : "chat-start"}`}
+              // Ref applied ONLY to the last message
               ref={isLastMessage ? messageEndRef : null} 
             >
               {/* Profile picture container */}
@@ -123,7 +120,7 @@ const ChatContainer = () => {
                   <img
                     src={
                       // Display appropriate profile picture based on sender
-                      message.senderId === authUser._id
+                      isMyMessage
                         ? authUser.profilePic || "/avatar.png"  // Current user's profile
                         : selectedUser.profilePic || "/avatar.png"  // Selected user's profile
                     }
